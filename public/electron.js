@@ -7,6 +7,13 @@ const isDev = require('electron-is-dev');
 const nativeImage = require('electron').nativeImage;
 const { sqlite3 } = require('sqlite3');
 const Promise = require('bluebird');
+var ipcMain = require('electron').ipcMain;
+
+global.sharedObj = {prop1: isDev ? 'C:/Users/rdumbraveanu/AppData/Local/todolist-app/' : './'};
+
+ipcMain.on('show-prop1', function(event) {
+    console.log(global.sharedObj.prop1);
+});
 
 let mainWindow;
 

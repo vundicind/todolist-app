@@ -5,6 +5,8 @@ import Promise from "bluebird";
 
 const AppDAO = require('./db/dao').default
 const Crud = require('./db/crud').default
+const UserCrud = require('./db/user-crud').default
+const remote = window.require('electron').remote;
 
 class TodoList extends Component {
     constructor(props) {
@@ -20,12 +22,21 @@ class TodoList extends Component {
         this.loadData();
     }
 
-    setDatabase() {
-        this.dao = new AppDAO('./database.sqlite3');
+    setDatabase() {console.log(remote.getGlobal('sharedObj').prop1);
+        this.dao = new AppDAO(remote.getGlobal('sharedObj').prop1 + 'database.sqlite3');
         this.db = new Crud(this.dao);
         this.db.createTable()
             .then(() => {
                 console.log('db is created...')
+            })
+            .catch((err) => {
+                console.log('Error: ')
+                console.log(JSON.stringify(err))
+            });
+        this.userCrud = new UserCrud(this.dao);
+        this.userCrud.createTable()
+            .then(() => {
+                console.log('Users table is created...')
             })
             .catch((err) => {
                 console.log('Error: ')
@@ -101,6 +112,7 @@ class TodoList extends Component {
                             placeholder="enter task">
                         </input>
                         <button type="submit">add</button>
+                        <input />
                     </form>
                 </div>
                 <TodoItems entries={this.state.items} delete={this.deleteItem} />
